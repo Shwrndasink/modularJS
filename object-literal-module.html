@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+    <head></head>
+    <body>
+        <style>
+            #people {
+                padding:0;
+                margin:20px 0px 0px 0px;
+            }
+            #people li{
+                background: #aaf5ff;
+                list-style-type: none;
+                width:150px;
+                float:left;
+                padding:10px;
+                border-left:5px solid blue;
+                margin-right:5px;
+            }
+            #people li i {
+                float:right;
+            }
+        </style>
+        <div class="" id="peopleModule">
+            <h1>People</h1>
+            <input type="text" placeholder="name">
+            <button id="addPerson">Add Person</button>
+            <ul id="people">
+                <script id="people-template" type="text/template">
+                {{#people}}
+                    <li>
+                        <span>{{.}}</span>
+                        <i class="del">x</i>
+                    </li>
+                {{/people}}
+                </script>
+            </ul>
+        </div>
+
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.js"></script>
+        <script>
+        (function(){
+            var people = {
+                people: [],
+                init: function(){
+                    this.cacheDom();
+                    this.bindEvents();
+                    this.render();
+                    //console.log('Was init');
+                },
+                cacheDom: function(){
+                    this.$el = $('#peopleModule');
+                    this.$button = this.$el.find('button');
+                    this.$input = this.$el.find('input');
+                    this.$ul = this.$el.find('ul');
+                    this.template = this.$el.find('#people-template').html();
+                },
+                bindEvents: function(){
+                    this.$button.on('click', this.addPerson.bind(this));
+                    this.$ul.delegate('i.del', 'click', this.deletePerson.bind(this));
+                },
+                render: function(){
+                    var data = {
+                        people: this.people,
+                    };
+                    this.$ul.html(Mustache.render(this.template, data));
+                },
+                addPerson: function(){
+                    this.people.push(this.$input.val());
+                    this.render();
+                    this.$input.val('');
+                },
+                deletePerson: function(e){
+                    var $remove = $(e.target).closest('li');
+                    var i = this.$ul.find('li').index($remove);
+                    this.people.splice(i, 1);
+                    this.render();
+                }
+            }
+            people.init();
+        })();
+        </script>
+    </body>
+</html>
